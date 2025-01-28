@@ -1,0 +1,231 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: postgres
+  name: postgres
+  namespace: database
+spec:
+  ports:
+    - port: 5432
+      name: outport
+      targetPort: 5432
+      nodePort: 30101
+  type: NodePort
+  selector:
+    app: postgres
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: database
+spec:
+  replicas: 1
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      #securityContext:
+      #  fsGroup: 1000 
+      #  runAsNonRoot: true
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-pvc-data
+      containers:
+        - name: postgres
+          image: postgres:latest
+          securityContext:
+            allowPrivilegeEscalation: true
+            runAsUser: 1000
+          envFrom:
+            - configMapRef:
+                name: postgres-secret
+          #command: ["postgres", "-c", "wal_level=logical"]   
+          volumeMounts:
+            - name: postgres-data
+              mountPath: "/var/lib/postgresql/data/"
+          ports:
+            - containerPort: 5432
+              #name: http
+              #protocol: TCP 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  namespace: database
+spec:
+  type: NodePort
+  ports:
+    - port: 27017
+      nodePort: 30102
+  selector:
+    app: mongodb
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+  namespace: database
+spec:
+  replicas: 1
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:  
+      securityContext:
+        fsGroup: 2000 
+        runAsUser: 1000
+      volumes:
+        - name: mongodb-data
+          persistentVolumeClaim:
+            claimName: mongodb-pvc-db
+      containers:
+        - name: mongodb
+          image: mongo
+          ports:
+            - containerPort: 27017
+          command:
+            - mongod
+            - "--replSet"
+            - rs0
+            - "--bind_ip_all"
+          volumeMounts:
+            - name: mongodb-data
+              mountPath: "/data/db" 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clickhouse
+  namespace: database
+spec:
+  type: NodePort
+  ports:
+    - port: 8123
+      targetPort: 8123
+      nodePort: 30103
+      name: db
+    - port: 9004
+      targetPort: 9000
+      nodePort: 30104
+      name: cli
+  selector:
+    app: clickhouse
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clickhouse
+  namespace: database
+spec:
+  replicas: 1
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - clickhouse
+  template:
+    metadata:
+      labels:
+        app: clickhouse
+    spec:
+      securityContext:
+        fsGroup: 2000 
+        runAsUser: 1000
+      volumes:
+        - name: clickhouse
+          persistentVolumeClaim:
+            claimName: clickhouse-pvc
+        - name: clickhouse-server
+          persistentVolumeClaim:
+            claimName: clickhouse-pvc-server     
+      containers:
+        - name: clickhouse
+          image: yandex/clickhouse-server
+          ports:
+            - name: db
+              containerPort: 8123
+              protocol: TCP
+            - name: cli
+              containerPort: 9000
+              protocol: TCP
+          volumeMounts:
+            - name: clickhouse
+              mountPath: "/var/lib/clickhouse"
+            - name: clickhouse-server
+              mountPath: "/var/log/clickhouse-server"   
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: database
+spec:
+  type: NodePort
+  ports:
+    - port: 6379
+      targetPort: 6379
+      nodePort: 30105
+  selector:
+    app: redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: database
+spec:
+  replicas: 1
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:     
+      containers:
+        - name: redis
+          image: redis
+          ports:
+            - name: http
+              containerPort: 6379
+              protocol: TCP
+ 
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            

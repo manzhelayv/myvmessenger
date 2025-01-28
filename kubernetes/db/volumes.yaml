@@ -1,0 +1,170 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: database
+  labels:
+    name: database
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv-data
+  labels:
+    type: local
+    app: postgres
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  #persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 192.168.1.93
+    path: /home/yuriy/nfs/kubernetes/db/postgres/data
+  
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc-data
+  namespace: database
+spec:
+  storageClassName: manual
+  resources:
+    requests:
+      storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongodb-pv-db
+spec:
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 192.168.1.93
+    path: /home/yuriy/nfs/kubernetes/db/mongodb/db
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodb-pvc-db
+  namespace: database
+spec:
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongodb-pv-backup
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  nfs:
+    server: 192.168.1.93
+    path: /home/yuriy/nfs/kubernetes/db/mongodb/backup
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodb-pvc-backup
+  namespace: database
+spec:
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: clickhouse-pv
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 192.168.1.93
+    path: /home/yuriy/nfs/kubernetes/db/clickhouse/clickhouse
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: clickhouse-pvc
+  namespace: database
+spec:
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 100Mi
+  accessModes:
+    - ReadWriteMany    
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: clickhouse-pv-server 
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 192.168.1.93
+    path: /home/yuriy/nfs/kubernetes/db/clickhouse/clickhouse-server
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: clickhouse-pvc-server
+  namespace: database
+spec:
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 100Mi
+  accessModes:
+    - ReadWriteMany    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+ 

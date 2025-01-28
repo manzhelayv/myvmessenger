@@ -1,0 +1,16 @@
+version: "3.5"
+
+services:
+  gitlab-runner:
+    image: gitlab/gitlab-runner:alpine
+    restart: unless-stopped
+    volumes:
+      - ./config/:/etc/gitlab-runner/
+      - ./data/runner/cache/:/cache/
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - gitlab_net
+
+networks:
+  gitlab_net:
+    name: gitlab_net

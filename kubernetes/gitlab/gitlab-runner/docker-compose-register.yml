@@ -1,0 +1,30 @@
+version: "3.5"
+
+services:
+  register-runner:
+    restart: "no"
+    image: gitlab/gitlab-runner:alpine
+    hostname: register-runner
+    environment:
+      - REGISTRATION_TOKEN=${RUNNER_TOKEN}
+      - CI_SERVER_URL=${RUNNER_URL}
+    command:
+      - register
+      - --non-interactive
+      - --locked=false
+      - --name=${RUNNER_NAME}
+      - --executor=docker
+      - --url=${RUNNER_URL}
+      - --clone-url=${RUNNER_URL}
+      - --docker-image=docker:20-dind
+      - --docker-volumes=/var/run/docker.sock:/var/run/docker.sock
+      - --docker-network-mode=host
+    volumes:
+      - ./config/:/etc/gitlab-runner
+      - ./data/dind/docker/:/var/lib/docker
+    networks:
+      - gitlab_net
+
+networks:
+  gitlab_net:
+    name: gitlab_net

@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package f3;
+option go_package = "./protobuf;protobuf";
+
+//import "google/protobuf/empty.proto";
+//import "google/protobuf/timestamp.proto";
+
+message ID {
+  string id = 1;
+}
+
+message File {
+  string tdid = 1;
+  string name = 2;
+  bytes content = 3;
+}
+
+message Files {
+  repeated File files = 1;
+}
+
+message FileRequest {
+  repeated string names = 1;
+}
+
+service FileClient {
+  rpc LoadFiles(Files) returns (Files) {}
+  rpc UploadFile(File) returns (ID) {}
+}

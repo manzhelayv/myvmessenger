@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mongodb-backup
+  namespace: database
+spec:
+  schedule: "*/30 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: mongodump
+            image: mongo:latest
+            securityContext:
+              allowPrivilegeEscalation: true
+              runAsUser: 1000
+            command:
+            - sh
+            - -c
+            - |
+              mongodump --host=mongodb --port=27017 --out=/backup/$(date +\%Y-\%m-\%dT\%H-\%M-\%S)
+              find /backup -type d -mtime +7 -exec rm -rf {} +
+            volumeMounts:
+            - name: backup-storage
+              mountPath: /backup
+          restartPolicy: Never
+          volumes:
+          - name: backup-storage
+            persistentVolumeClaim:
+              claimName: mongodb-pvc-backup

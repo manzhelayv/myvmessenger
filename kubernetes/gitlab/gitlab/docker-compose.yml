@@ -1,0 +1,54 @@
+version: "3.5"
+
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    hostname: "localhost"
+    restart: unless-stopped
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        gitlab_rails['gitlab_shell_ssh_port'] = 8822
+        gitlab_rails['initial_root_password'] = 'CHANGEME123'
+    ports:
+      - "8000:80"
+      - "8822:22"
+    volumes:
+      - ./data/docker/gitlab/etc/gitlab:/etc/gitlab
+      - ./data/docker/gitlab/var/opt/gitlab:/var/opt/gitlab
+      - ./data/docker/gitlab/var/log/gitlab:/var/log/gitlab
+    networks:
+      - gitlab_net
+
+  dind:
+    image: docker:20-dind
+    restart: always
+    privileged: true
+    environment:
+      DOCKER_TLS_CERTDIR: ""
+    command:
+      - --storage-driver=overlay2
+    volumes:
+      - ./data/dind/docker:/var/lib/docker
+    networks:
+      - gitlab_net
+    depends_on:
+      - gitlab
+
+  gitlab-runner:
+    image: gitlab/gitlab-runner:alpine
+    restart: unless-stopped
+    environment:
+      - DOCKER_HOST=${DOCKER_HOSTS}
+    volumes:
+      - ./config/:/etc/gitlab-runner/
+      - ./data/runner/cache/:/cache/
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - gitlab_net
+    depends_on:
+      - gitlab
+
+
+networks:
+  gitlab_net:
+    name: gitlab_net

@@ -1,0 +1,41 @@
+import {StyleSheet} from "react-native";
+
+export const styles = StyleSheet.create({
+    rightChatText: {
+        width: 'auto',
+        maxWidth: 260,
+        float: 'right',
+        zIndex: 10,
+        right: 8,
+        top: 0,
+        borderColor: '#03fc8c',
+        borderWidth: 7,
+        borderRadius: 10,
+        padding: 5,
+        paddingTop: 0,
+        marginTop:10,
+        backgroundColor: '#03fc5e',
+        display: 'block',
+        marginLeft: "auto",
+    },
+    leftChatText: {
+        width: 'auto',
+        maxWidth: 260,
+        float: 'left',
+        top: 0,
+        borderColor: '#03fc8c',
+        borderWidth: 7,
+        borderRadius: 10,
+        padding: 5,
+        paddingTop: 0,
+        marginTop:10,
+        backgroundColor: '#03fc5e',
+        display: 'block',
+        marginRight: "auto",
+        left: 8,
+    },
+    buttonText: {
+        fontFamily : 'RightLato',
+        fontSize:11,
+    },
+});

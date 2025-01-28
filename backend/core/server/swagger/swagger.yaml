@@ -1,0 +1,407 @@
+definitions:
+  models.Contacts:
+    properties:
+      avatar:
+        description: Аватарка пользователя, которому отпраляются сообщения из f3
+        items:
+          type: integer
+        type: array
+      created_at:
+        description: Дата создания контакта
+        type: string
+      email:
+        description: Email пользователя, которому отпраляются сообщения
+        type: string
+      image:
+        description: Название фото пользователя, которому отпраляются сообщения в
+          f3
+        type: string
+      updated_at:
+        description: Дата редактирования контакта
+        type: string
+      user_from:
+        description: Уникальный идентификатор текущего пользователя
+        type: string
+      user_to:
+        description: Уникальный идентификатор пользователя добавленного в контакты
+        type: string
+      user_to_name:
+        description: Имя пользователя добавленного в контакты
+        type: string
+    type: object
+  models.Details:
+    properties:
+      code:
+        description: application-определенный код ошибки
+        type: integer
+      message:
+        description: application-level сообщение, для дебага
+        type: string
+      status:
+        description: Сообщение пользовательского уровня
+        type: string
+    type: object
+  models.LoginResponse:
+    properties:
+      access_token:
+        description: Токен доступа
+        type: string
+      email:
+        description: Email пользователя
+        type: string
+      login:
+        description: Логин пользователя
+        type: string
+      name:
+        description: Имя пользователя
+        type: string
+      phone:
+        description: Телефон
+        type: string
+      tdid:
+        description: Уникальный идентификатор пользователя
+        type: string
+    type: object
+  models.ProfileResponse:
+    properties:
+      avatar:
+        description: Аватарка пользователя в f3 сервисе
+        items:
+          type: integer
+        type: array
+      image:
+        description: Картинка пользователя в f3 сервисе
+        type: string
+      user_id:
+        description: Связанное поле с таблицей user
+        type: integer
+    type: object
+  models.Response:
+    properties:
+      error:
+        allOf:
+        - $ref: '#/definitions/models.Details'
+        description: Описание ошибки
+    type: object
+  protobuf.ID:
+    properties:
+      id:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /contacts:
+    get:
+      consumes:
+      - application/json
+      description: Получение контактов пользователя по tdid
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Contacts'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Получение контактов
+      tags:
+      - contacts
+    post:
+      consumes:
+      - application/json
+      description: Добавление контакта пользователю по email или login
+      parameters:
+      - description: email или login пользователя
+        in: query
+        name: email_or_login
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Contacts'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Добавление контакта
+      tags:
+      - contacts
+    put:
+      consumes:
+      - application/json
+      description: Добавление контактов пользователю по номеру телефона
+      parameters:
+      - description: номеру телефона пользователя
+        in: query
+        name: email_or_login
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Contacts'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Добавление контактов
+      tags:
+      - contacts
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Авторизация пользователя по email или login и password
+      parameters:
+      - description: Логин пользователя или email
+        in: query
+        name: email_or_login
+        required: true
+        type: string
+      - description: Пароль пользователя
+        in: query
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.LoginResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Авторизация пользователя
+      tags:
+      - users
+  /profile:
+    get:
+      consumes:
+      - application/json
+      description: Получение профайла
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ProfileResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Получение профайла пользователя
+      tags:
+      - profile
+    post:
+      consumes:
+      - application/json
+      description: Изменение профайла
+      parameters:
+      - description: Фото пользователя
+        in: query
+        name: image
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/protobuf.ID'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Изменение профайла пользователя
+      tags:
+      - profile
+  /updatepassword:
+    put:
+      consumes:
+      - application/json
+      description: Изменение пароля пользователя
+      parameters:
+      - description: Новый пароль пользователя
+        in: query
+        name: newPassword
+        required: true
+        type: string
+      - description: Старый пароль пользователя
+        in: query
+        name: oldPassword
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Изменение пароля пользователя
+      tags:
+      - users
+  /user:
+    post:
+      consumes:
+      - application/json
+      description: Регистрация пользователя по email, name, login, password
+      parameters:
+      - description: email пользователя
+        in: query
+        name: email
+        required: true
+        type: string
+      - description: Имя пользователя
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: Логин пользователя
+        in: query
+        name: login
+        required: true
+        type: string
+      - description: Пароль пользователя
+        in: query
+        name: password
+        required: true
+        type: string
+      - description: Телефон пользователя
+        in: query
+        name: phone
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.LoginResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Регистрация пользователя
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Обновление данных пользователя
+      parameters:
+      - description: email пользователя
+        in: query
+        name: email
+        required: true
+        type: string
+      - description: Имя пользователя
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: Логин пользователя
+        in: query
+        name: login
+        required: true
+        type: string
+      - description: Телефон пользователя
+        in: query
+        name: phone
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.LoginResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Обновление данных пользователя
+      tags:
+      - users
+  /user/image/{user_to}:
+    get:
+      consumes:
+      - application/json
+      description: Получение картинки пользователя
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ProfileResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Получение картинки пользователя
+      tags:
+      - users
+swagger: "2.0"

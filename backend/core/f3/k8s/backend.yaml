@@ -1,0 +1,71 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: f3
+  namespace: backend
+spec:
+  ports:
+    - port: 8099
+      name: http
+      nodePort: 30099
+    - port: 4052
+      name: grpc
+      nodePort: 30052
+  type: NodePort
+  selector:
+    app: f3
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: f3
+  namespace: backend
+  annotations:
+    job-date: "${JOB_DATE}"
+spec:
+  replicas: 1
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - f3
+  template:
+    metadata:
+      labels:
+        app: f3
+      annotations:
+        job-date: "${JOB_DATE}"
+    spec:
+      volumes:
+        - name: log
+          persistentVolumeClaim:
+            claimName: f3-pvc-log
+      containers:
+        - name: f3
+          image: myv111/f3
+          envFrom:
+            - configMapRef:
+                name: f3-secret
+          ports:
+            - name: http
+              containerPort: 8099
+            - name: grpc
+              containerPort: 4052
+          command: ["/app/main"]    
+          livenessProbe:
+            tcpSocket:
+              port: 8099
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            tcpSocket:
+              port: 8099
+            initialDelaySeconds: 5
+            periodSeconds: 20
+          volumeMounts:
+            - name: log
+              mountPath: "/app/log/logs"
+              subPath: logs
+---

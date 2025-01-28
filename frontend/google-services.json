@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "437088423176",
+    "project_id": "myvmessanger",
+    "storage_bucket": "myvmessanger.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:437088423176:android:37f53595f9f49eb804f0bd",
+        "android_client_info": {
+          "package_name": "com.yvmanzhela.MYVMessanger"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-Bja9Yd5BRL7vJp8q4Hk_oV4TVcDfNL8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

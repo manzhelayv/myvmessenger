@@ -1,0 +1,205 @@
+definitions:
+  models.Chats:
+    properties:
+      avatar:
+        description: Аватарка пользователя, которому отпраляются сообщения из f3
+        items:
+          type: integer
+        type: array
+      date:
+        description: Дата и время последнего сообщения
+        type: string
+      date_day:
+        description: День, месяц, год или "Вчера" последнего сообщения
+        type: string
+      date_time:
+        description: Время последнего сообщения
+        type: string
+      date_timestamp:
+        description: Дата в timestamp
+        type: integer
+      email:
+        description: Email собеседника
+        type: string
+      file:
+        description: Если передан файл
+        type: string
+      image:
+        description: Название фото пользователя, которому отпраляются сообщения в
+          f3
+        type: string
+      message:
+        description: Последнее сообщение в текущем чате
+        type: string
+      name:
+        description: Имя собеседника
+        type: string
+      user_from:
+        description: Уникальный идентификатор текущего пользователя
+        type: string
+      user_to:
+        description: Уникальный идентификатор собеседника
+        type: string
+    type: object
+  models.Details:
+    properties:
+      code:
+        description: application-определенный код ошибки
+        type: integer
+      message:
+        description: application-level сообщение, для дебага
+        type: string
+      status:
+        description: сообщение пользовательского уровня
+        type: string
+    type: object
+  models.Messages:
+    properties:
+      _id:
+        type: string
+      created_at:
+        description: Дата создания сообщения
+        type: string
+      date:
+        description: День, месяц, год отправленного сообщения
+        type: string
+      date_time:
+        description: Часы, минуты отправленного сообщения
+        type: string
+      date_timestamp:
+        description: Дата в timestamp
+        type: integer
+      file:
+        description: Если передан файл
+        type: string
+      message:
+        description: Сообщение
+        type: string
+      updated_at:
+        description: Дата редактирования сообщения
+        type: string
+      user_from:
+        description: Уникальный идентификатор текущего пользователя
+        type: string
+      user_to:
+        description: Уникальный идентификатор пользователя которому отправили сообщение
+        type: string
+    type: object
+  models.MessagesUser:
+    properties:
+      messages:
+        description: Сообщения
+        items:
+          $ref: '#/definitions/models.Messages'
+        type: array
+    type: object
+  models.Response:
+    properties:
+      error:
+        allOf:
+        - $ref: '#/definitions/models.Details'
+        description: Описание ошибки
+    type: object
+info:
+  contact: {}
+paths:
+  /chat/{user_to}:
+    get:
+      consumes:
+      - application/json
+      description: Получение сообщений чата с пользователем по user_to
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: пользователь в чате для получения всей переписки с ним
+        in: query
+        name: user_to
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.MessagesUser'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Получение сообщений
+      tags:
+      - chat
+    post:
+      consumes:
+      - application/json
+      description: Добавление сообщения в чат пользователю по user_to
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: пользователь в чате которому отправляется сообщение
+        in: query
+        name: user_to
+        required: true
+        type: string
+      - description: сообщение
+        in: query
+        name: message
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Chats'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Добавление сообщения
+      tags:
+      - chat
+  /chat/chats:
+    get:
+      consumes:
+      - application/json
+      description: Получение чатов пользователя по tdid пользователя
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/models.Chats'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Получение чатов
+      tags:
+      - chat
+swagger: "2.0"

@@ -1,0 +1,114 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: server-pv-log
+  labels:
+    type: local
+    app: server
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 192.168.1.93
+    path: /home/yuriy/nfs/kubernetes/backend/server/log
+  
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: server-pvc-log
+  namespace: backend
+spec:
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: f3-pv-log
+  labels:
+    type: local
+    app: f3
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 192.168.1.93
+    path: /home/yuriy/nfs/kubernetes/backend/f3/log
+  
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: f3-pvc-log
+  namespace: backend
+spec:
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: chat-pv-log
+  labels:
+    type: local
+    app: chat
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 192.168.1.93
+    path: /home/yuriy/nfs/kubernetes/backend/chat/log
+  
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: chat-pvc-log
+  namespace: backend
+spec:
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+ 

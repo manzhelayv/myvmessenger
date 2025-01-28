@@ -1,0 +1,86 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat
+  namespace: backend
+spec:
+  ports:
+    - port: 8095
+      name: http
+      nodePort: 30095
+    - port: 4051
+      name: grpc
+      nodePort: 30051
+    - port: 29094
+      name: kafka
+      nodePort: 30029
+    - port: 9092
+      name: kafka2
+      nodePort: 30028
+    - port: 1235
+      name: ws
+      nodePort: 30012
+  type: LoadBalancer
+  selector:
+    app: chat
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat
+  namespace: backend
+  annotations:
+    job-date: "${JOB_DATE}"
+spec:
+  replicas: 1
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - chat
+  template:
+    metadata:
+      labels:
+        app: chat
+      annotations:
+        job-date: "${JOB_DATE}"
+    spec:
+      volumes:
+        - name: log
+          persistentVolumeClaim:
+            claimName: chat-pvc-log
+      containers:
+        - name: chat
+          image: myv111/chat
+          envFrom:
+            - configMapRef:
+                name: chat-secret
+          ports:
+            - name: http
+              containerPort: 8095
+            - name: grpc
+              containerPort: 4051
+            - name: kafka
+              containerPort: 29094
+            - name: kafka2
+              containerPort: 9092
+            - name: ws
+              containerPort: 1235
+          livenessProbe:
+            tcpSocket:
+              port: 8095
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            tcpSocket:
+              port: 8095
+            initialDelaySeconds: 5
+            periodSeconds: 20
+          command: ["/app/main"]    
+          volumeMounts:
+            - name: log
+              mountPath: "/app/log/logs"
+              subPath: logs 
+---

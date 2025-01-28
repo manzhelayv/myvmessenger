@@ -1,0 +1,241 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: confluent
+  labels:
+    name: confluent
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: zookeeper-pv-log
+  namespace: confluent
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 192.168.1.93
+    path: /home/yuriy/nfs/kubernetes/kafka/zookeeper/log
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: zookeeper-pvc-log
+  namespace: confluent
+spec:
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: zookeeper-pv-data
+  namespace: confluent
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 192.168.1.93
+    path: /home/yuriy/nfs/kubernetes/kafka/zookeeper/data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: zookeeper-pvc-data
+  namespace: confluent
+spec:
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: kafka-pv-log
+  namespace: confluent
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 192.168.1.93
+    path: /home/yuriy/nfs/kubernetes/kafka/kafka/log
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kafka-pvc-log
+  namespace: confluent
+spec:
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: kafka-pv-data
+  namespace: confluent
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 192.168.1.93
+    path: /home/yuriy/nfs/kubernetes/kafka/kafka/data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kafka-pvc-data
+  namespace: confluent
+spec:
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: kafka-pv-secrets
+  namespace: confluent
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 192.168.1.93
+    path: /home/yuriy/nfs/kubernetes/kafka/kafka/secrets
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kafka-pvc-secrets
+  namespace: confluent
+spec:
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: connect-pv
+  namespace: confluent
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 192.168.1.93
+    path: /home/yuriy/nfs/kubernetes/kafka/connect
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: connect-pvc
+  namespace: confluent
+spec:
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: akhq-pv-data
+  namespace: confluent
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 192.168.1.93
+    path: /home/yuriy/nfs/kubernetes/kafka/akhq
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: akhq-pvc-data
+  namespace: confluent
+spec:
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ksqldb-pv-data
+  namespace: confluent
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 192.168.1.93
+    path: /home/yuriy/nfs/kubernetes/kafka/ksqldb
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ksqldb-pvc-data
+  namespace: confluent
+spec:
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+    
+    
+    
+    
+    
+    
+    
+    
+    

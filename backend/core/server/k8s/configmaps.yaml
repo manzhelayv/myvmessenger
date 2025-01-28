@@ -1,0 +1,128 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: backend
+  labels:
+    name: backend
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: server-secret
+  labels:
+    app: server
+  namespace: backend
+  annotations:
+    job-date: "${JOB_DATE}"
+data:
+  DATASTORE_MONGO: mongo
+  DATASTORE_MONGO_DB: test
+  DATASTORE_MONGO_URL: mongodb://mongodb.database:27017/?directConnection=true
+  DATASTORE_POSTGRES: postgres
+  DATASTORE_POSTGRES_DB: postgres
+  DATASTORE_POSTGRES_USER: postgres
+  DATASTORE_POSTGRES_PASSWORD: postgres
+  DATASTORE_POSTGRES_URL: postgres.database:5432
+  DATASTORE_REDIS: "1"
+  DATASTORE_REDIS_REDISPASSWORD: ""
+  DATASTORE_REDIS_URL: redis.database:6379
+  LISTEN: ":8096"
+  GRPC_LISTEN: ":4050"
+  GRPC_CLIENT_F3: "f3.backend:4052"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: f3-secret
+  labels:
+    app: f3
+  namespace: backend
+  annotations:
+    job-date: "${JOB_DATE}"
+data:
+  DATASTORE_MONGO: mongo
+  DATASTORE_MONGO_DB: test
+  DATASTORE_MONGO_URL: mongodb://mongodb.database:27017/?directConnection=true
+  DATASTORE_POSTGRES: postgres
+  DATASTORE_POSTGRES_DB: postgres
+  DATASTORE_POSTGRES_USER: postgres
+  DATASTORE_POSTGRES_PASSWORD: postgres
+  DATASTORE_POSTGRES_URL: postgres.database:5432
+  DATASTORE_REDIS: "1"
+  DATASTORE_REDIS_REDISPASSWORD: ""
+  DATASTORE_REDIS_URL: redis.database:6379
+  LISTEN: ":8099"
+  GRPC_LISTEN: ":4052"
+  MINIO_API_ADDR: "minio.minio:9000"
+  MINIO_ACCESS_KEY_ID: "ROOTNAME"
+  MINIO_SECRET_ACCESS_KEY: "CHANGEME123"
+  MINIO_BUCKET_NAME: "messanger"
+  MINIO_LOCATION: "eu-central-1"
+  MINIO_USE_SSL: ""
+---
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chat-secret
+  labels:
+    app: chat
+  namespace: backend
+  annotations:
+    job-date: "${JOB_DATE}"
+data:
+  DATASTORE_MONGO: mongo
+  DATASTORE_MONGO_DB: test
+  DATASTORE_MONGO_URL: mongodb://mongodb.database:27017/?directConnection=true
+  DATASTORE_POSTGRES: postgres
+  DATASTORE_POSTGRES_DB: postgres
+  DATASTORE_POSTGRES_USER: postgres
+  DATASTORE_POSTGRES_PASSWORD: postgres
+  DATASTORE_POSTGRES_URL: postgres.database:5432
+  DATASTORE_REDIS: "1"
+  DATASTORE_REDIS_REDISPASSWORD: ""
+  DATASTORE_REDIS_URL: redis.database:6379
+  LISTEN: ":8095"
+  GRPC_LISTEN: ":4051"
+  GRPC_CLIENT_F3: "f3.backend:4052"
+  DATASTORE_CLICKHOUSE_USER: "default"
+  DATASTORE_CLICKHOUSE_PASSWORD: ""
+  DATASTORE_CLICKHOUSE_HOST: "clickhouse.database"
+  DATASTORE_CLICKHOUSE_PORT: "9004"
+  DATASTORE_CLICKHOUSE_DB: "default"
+  BROKERS_PRODUCER_KAFKA: "kafka.confluent:9092"
+  USERNAME_PRODUCER_KAFKA: ""
+  PASSWORD_PRODUCER_KAFKA: ""
+  TOPIC_PRODUCER_KAFKA: "mongo_chats"
+  BROKERS_CONSUMER_KAFKA: "kafka.confluent:9092"
+  USERNAME_CONSUMER_KAFKA: ""
+  PASSWORD_CONSUMER_KAFKA: ""
+  TOPIC_CONSUMER_KAFKA: "mongo_chats"
+  TOPIC_GROUP_ID_KAFKA: "chat-group-id"
+  BROKERS_PRODUCER_KAFKA_DEBEZIUM: "kafka.confluent:9092"
+  USERNAME_PRODUCER_KAFKA_DEBEZIUM: ""
+  PASSWORD_PRODUCER_KAFKA_DEBEZIUM: ""
+  TOPIC_PRODUCER_KAFKA_DEBEZIUM: "chats.test.chat"
+  BROKERS_CONSUMER_KAFKA_DEBEZIUM: "kafka.confluent:9092"
+  USERNAME_CONSUMER_KAFKA_DEBEZIUM: ""
+  PASSWORD_CONSUMER_KAFKA_DEBEZIUM: ""
+  TOPIC_CONSUMER_KAFKA_DEBEZIUM: "chats.test.chat"
+  TOPIC_GROUP_ID_KAFKA_DEBEZIUM: "debezium-chat-group-id"
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

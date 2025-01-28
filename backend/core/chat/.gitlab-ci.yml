@@ -1,0 +1,38 @@
+variables:
+  GITLAB_RUNNER_VERSION: v17.8.1
+
+stages:
+  - build
+  - deploy
+
+build development:
+  stage: build
+  image:
+    name: docker:stable
+    pull_policy: ["if-not-present", "always"]
+  tags:
+    - build_development
+  before_script:
+    - echo "$REGISTRY_PASSWORD" | docker login --username $REGISTRY_LOGIN --password-stdin
+  script:
+    - docker build -t myv111/chat .
+    - docker build --build-arg GITLAB_RUNNER_VERSION=${GITLAB_RUNNER_VERSION} -t myv111/chat .
+    - docker push myv111/chat
+
+deploy development:
+  stage: deploy
+  image:
+    name: roffe/kubectl
+    pull_policy: [ "if-not-present", "always" ]
+  tags:
+    - build_development
+  needs:
+    - build development
+  before_script:
+    - export JOB_DATE=$(date +%s)
+    - cat ./k8s/backend.yaml | envsubst > /tmp/deployment.yaml
+    - export CONFIG=$REGISTRY_CONFIG
+    - printenv CONFIG > /tmp/config
+  script:
+    - kubectl --kubeconfig=/tmp/config apply -f /tmp/deployment.yaml
+

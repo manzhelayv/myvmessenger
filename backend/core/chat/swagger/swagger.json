@@ -1,0 +1,300 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/chat/chats": {
+            "get": {
+                "description": "Получение чатов пользователя по tdid пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chat"
+                ],
+                "summary": "Получение чатов",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/models.Chats"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/chat/{user_to}": {
+            "get": {
+                "description": "Получение сообщений чата с пользователем по user_to",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chat"
+                ],
+                "summary": "Получение сообщений",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "пользователь в чате для получения всей переписки с ним",
+                        "name": "user_to",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.MessagesUser"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Добавление сообщения в чат пользователю по user_to",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chat"
+                ],
+                "summary": "Добавление сообщения",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "пользователь в чате которому отправляется сообщение",
+                        "name": "user_to",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "сообщение",
+                        "name": "message",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Chats"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.Chats": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "Аватарка пользователя, которому отпраляются сообщения из f3",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "date": {
+                    "description": "Дата и время последнего сообщения",
+                    "type": "string"
+                },
+                "date_day": {
+                    "description": "День, месяц, год или \"Вчера\" последнего сообщения",
+                    "type": "string"
+                },
+                "date_time": {
+                    "description": "Время последнего сообщения",
+                    "type": "string"
+                },
+                "date_timestamp": {
+                    "description": "Дата в timestamp",
+                    "type": "integer"
+                },
+                "email": {
+                    "description": "Email собеседника",
+                    "type": "string"
+                },
+                "file": {
+                    "description": "Если передан файл",
+                    "type": "string"
+                },
+                "image": {
+                    "description": "Название фото пользователя, которому отпраляются сообщения в f3",
+                    "type": "string"
+                },
+                "message": {
+                    "description": "Последнее сообщение в текущем чате",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Имя собеседника",
+                    "type": "string"
+                },
+                "user_from": {
+                    "description": "Уникальный идентификатор текущего пользователя",
+                    "type": "string"
+                },
+                "user_to": {
+                    "description": "Уникальный идентификатор собеседника",
+                    "type": "string"
+                }
+            }
+        },
+        "models.Details": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "application-определенный код ошибки",
+                    "type": "integer"
+                },
+                "message": {
+                    "description": "application-level сообщение, для дебага",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "сообщение пользовательского уровня",
+                    "type": "string"
+                }
+            }
+        },
+        "models.Messages": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "Дата создания сообщения",
+                    "type": "string"
+                },
+                "date": {
+                    "description": "День, месяц, год отправленного сообщения",
+                    "type": "string"
+                },
+                "date_time": {
+                    "description": "Часы, минуты отправленного сообщения",
+                    "type": "string"
+                },
+                "date_timestamp": {
+                    "description": "Дата в timestamp",
+                    "type": "integer"
+                },
+                "file": {
+                    "description": "Если передан файл",
+                    "type": "string"
+                },
+                "message": {
+                    "description": "Сообщение",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "Дата редактирования сообщения",
+                    "type": "string"
+                },
+                "user_from": {
+                    "description": "Уникальный идентификатор текущего пользователя",
+                    "type": "string"
+                },
+                "user_to": {
+                    "description": "Уникальный идентификатор пользователя которому отправили сообщение",
+                    "type": "string"
+                }
+            }
+        },
+        "models.MessagesUser": {
+            "type": "object",
+            "properties": {
+                "messages": {
+                    "description": "Сообщения",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Messages"
+                    }
+                }
+            }
+        },
+        "models.Response": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "description": "Описание ошибки",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.Details"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

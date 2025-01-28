@@ -1,0 +1,257 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: server
+  namespace: backend
+spec:
+  ports:
+    - port: 8096
+      name: http
+      nodePort: 30096
+    - port: 4050
+      name: grpc
+      nodePort: 30050
+  type: NodePort
+  selector:
+    app: server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server
+  namespace: backend
+  annotations:
+    job-date: "${JOB_DATE}"
+spec:
+  replicas: 1
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - server
+  template:
+    metadata:
+      labels:
+        app: server
+      annotations:
+        job-date: "${JOB_DATE}"
+    spec:
+      volumes:
+        - name: log
+          persistentVolumeClaim:
+            claimName: server-pvc-log
+      containers:
+        - name: server
+          image: myv111/server
+          envFrom:
+            - configMapRef:
+                name: server-secret
+          ports:
+            - name: http
+              containerPort: 8096
+            - name: grpc
+              containerPort: 4050
+          command: ["/app/main"]    
+          livenessProbe:
+            tcpSocket:
+              port: 8096
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            tcpSocket:
+              port: 8096
+            initialDelaySeconds: 5
+            periodSeconds: 20
+          volumeMounts:
+            - name: log
+              mountPath: "/app/log/logs"
+              subPath: logs
+---          
+apiVersion: v1
+kind: Service
+metadata:
+  name: f3
+  namespace: backend
+spec:
+  ports:
+    - port: 8099
+      name: http
+      nodePort: 30099
+    - port: 4052
+      name: grpc
+      nodePort: 30052
+  type: NodePort
+  selector:
+    app: f3
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: f3
+  namespace: backend
+  annotations:
+    job-date: "${JOB_DATE}"
+spec:
+  replicas: 1
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - f3
+  template:
+    metadata:
+      labels:
+        app: f3
+      annotations:
+        job-date: "${JOB_DATE}"
+    spec:
+      volumes:
+        - name: log
+          persistentVolumeClaim:
+            claimName: f3-pvc-log
+      containers:
+        - name: f3
+          image: myv111/f3
+          envFrom:
+            - configMapRef:
+                name: f3-secret
+          ports:
+            - name: http
+              containerPort: 8099
+            - name: grpc
+              containerPort: 4052
+          command: ["/app/main"]    
+          livenessProbe:
+            tcpSocket:
+              port: 8099
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            tcpSocket:
+              port: 8099
+            initialDelaySeconds: 5
+            periodSeconds: 20
+          volumeMounts:
+            - name: log
+              mountPath: "/app/log/logs"
+              subPath: logs
+---  
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat
+  namespace: backend
+spec:
+  ports:
+    - port: 8095
+      name: http
+      nodePort: 30095
+    - port: 4051
+      name: grpc
+      nodePort: 30051
+    - port: 29094
+      name: kafka
+      nodePort: 30029
+    - port: 9092
+      name: kafka2
+      nodePort: 30028
+    - port: 1235
+      name: ws
+      nodePort: 30012
+  type: LoadBalancer
+  selector:
+    app: chat
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat
+  namespace: backend
+  annotations:
+    job-date: "${JOB_DATE}"
+spec:
+  replicas: 1
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - chat
+  template:
+    metadata:
+      labels:
+        app: chat
+      annotations:
+        job-date: "${JOB_DATE}"
+    spec:
+      volumes:
+        - name: log
+          persistentVolumeClaim:
+            claimName: chat-pvc-log
+      containers:
+        - name: chat
+          image: myv111/chat
+          envFrom:
+            - configMapRef:
+                name: chat-secret
+          ports:
+            - name: http
+              containerPort: 8095
+            - name: grpc
+              containerPort: 4051
+            - name: kafka
+              containerPort: 29094
+            - name: kafka2
+              containerPort: 9092
+            - name: ws
+              containerPort: 1235
+          livenessProbe:
+            tcpSocket:
+              port: 8095
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            tcpSocket:
+              port: 8095
+            initialDelaySeconds: 5
+            periodSeconds: 20
+          command: ["/app/main"]    
+          volumeMounts:
+            - name: log
+              mountPath: "/app/log/logs"
+              subPath: logs 
+---  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+              

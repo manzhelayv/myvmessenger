@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  p_db:
+    image: postgres:latest
+    restart: always
+    container_name: p_db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+    command: ["postgres", "-c", "wal_level=logical"]
+    volumes:
+      - ./p_db/data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "psql", "-U", "postgres", "-c", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "2048m"
+    networks:
+      - app-network
+
+  mongodb:
+    image: mongo:latest
+    restart: always
+    container_name: mongodb
+    ports:
+      - 27017:27017
+    healthcheck:
+      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongodb:27017'}]}) }" | mongosh --port 27017 --quiet
+      interval: 5s
+      timeout: 30s
+      start_period: 0s
+      retries: 30
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
+    volumes:
+      - "./mongodb_data:/data/db"
+      - "./mongodb_config:/data/configdb"
+    networks:
+      - app-network
+
+  ch_server:
+    image: yandex/clickhouse-server
+    restart: always
+    container_name: ch_server
+    ports:
+      - "8123:8123"
+      - "9004:9000"
+    volumes:
+      - "./clickhouse/data/config/:/var/lib/clickhouse/"
+      - "./clickhouse/data/log/:/var/log/clickhouse-server/"
+    networks:
+      - app-network
+
+  redis:
+    image: redis
+    restart: always
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+    
+    
+    
+    
+    
